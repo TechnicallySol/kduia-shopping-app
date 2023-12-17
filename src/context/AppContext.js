@@ -53,7 +53,12 @@ export const AppReducer = (state, action) => {
             return {
                 ...state
             }
-
+    case 'MAX_BUDGET':
+        state.Budget = action.payload;
+        action.type = 'DONE'
+        return{
+            ...state
+        }
         default:
             return state;
     }
@@ -68,7 +73,8 @@ const initialState = {
         { id: "Dinner set", name: 'Dinner set', quantity: 0, unitprice: 600 },
         { id: "Bags", name: 'Bags', quantity: 0, unitprice: 200 },
     ],
-    Location: '£'
+    Location: '£',
+    Budget : ''
 };
 
 // 2. Creates the context this is the thing our components import and use to get the state
@@ -79,11 +85,16 @@ export const AppContext = createContext();
 export const AppProvider = (props) => {
     // 4. Sets up the app state. takes a reducer, and an initial state
     const [state, dispatch] = useReducer(AppReducer, initialState);
+   
+    const getBudget = state.Budget.reduce();
+    state.Budget = getBudget;
 
     const totalExpenses = state.expenses.reduce((total, item) => {
         return (total = total + (item.unitprice*item.quantity));
     }, 0);
 state.CartValue = totalExpenses;
+
+
 
     return (
         <AppContext.Provider
@@ -91,7 +102,8 @@ state.CartValue = totalExpenses;
                 expenses: state.expenses,
                 CartValue: state.CartValue,
                 dispatch,
-                Location: state.Location
+                Location: state.Location,
+                Budget: state.Budget
             }}
         >
             {props.children}
